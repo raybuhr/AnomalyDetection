@@ -3,7 +3,7 @@ import scipy as sp
 import pandas as pd
 import datetime
 import statsmodels.api as sm
-import anomaly_detection.anomaly_detect_ts
+from anomaly_detection.anomaly_detect_ts import _detect_anoms
 
 '''
 Description:
@@ -135,7 +135,7 @@ Examples:
 '''
 
 
-def __verbose_if(condition, args,kwargs):
+def __verbose_if(condition, *args, **kwargs):
     if condition:
         print(args)
         print(kwargs)
@@ -146,7 +146,7 @@ def anomaly_detect_vec(x, max_anoms=0.1, direction="pos", alpha=0.05,
                        longterm_period=None, plot=False, y_log=False, xlabel="",
                        ylabel="count", title="", verbose=False):
 
-    assert isinstance(x) == pd.Series, 'x must be pandas series'
+    assert isinstance(x, pd.Series), 'x must be pandas series'
     assert max_anoms < 0.5, 'max_anoms must be < 0.5'
     assert direction in ['pos', 'neg', 'both'], 'direction should be one of "pos", "neg", "both"'
     assert period, "Period must be set to the number of data points in a single period"
@@ -165,7 +165,7 @@ def anomaly_detect_vec(x, max_anoms=0.1, direction="pos", alpha=0.05,
     all_anoms = pd.Series()
     seasonal_plus_trend = pd.Series()
     for ts in all_data:
-        tmp = anomaly_detect_ts._detect_anoms(
+        tmp = _detect_anoms(
             ts, k=max_anoms, alpha=alpha, num_obs_per_period=period, use_decomp=True,
             use_esd=False, direction=direction, verbose=verbose)
 
